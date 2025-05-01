@@ -35,6 +35,16 @@ def update_movie(index):
     
     else:
         return jsonify({"message': 'can't find new movie"}), 404
+    
+
+@app.route('/movies/<int:index>', methods = 'DELETE')
+def delete_movie(index):
+    if 0 <= index < len(movies):
+      movies.remove(index)
+      return jsonify({"message": "Movie Deleted Successfully"})
+    
+    else:
+        return jsonify({"message": "Can't delete movie"})
 
 
 if __name__ == '__main__':
