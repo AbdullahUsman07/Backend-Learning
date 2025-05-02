@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 movies = []
 
+
 @app.route('/movies', methods = ['POST'])
 def add_movies():
     data = request.get_json()
@@ -34,14 +35,14 @@ def update_movie(index):
        return jsonify({'message': 'Movie Updated Sucessfully'})
     
     else:
-        return jsonify({"message': 'can't find new movie"}), 404
+        return jsonify({"message": "can't find new movie"}), 404
     
 
-@app.route('/movies/<int:index>', methods = 'DELETE')
+@app.route('/movies/<int:index>', methods = ['DELETE'])
 def delete_movie(index):
     if 0 <= index < len(movies):
-      movies.remove(index)
-      return jsonify({"message": "Movie Deleted Successfully"})
+       deleted = movies.pop(index)
+       return jsonify({"message": "Movie Deleted Successfully", "movie": deleted})
     
     else:
         return jsonify({"message": "Can't delete movie"})
