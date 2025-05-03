@@ -12,7 +12,7 @@ def home():
 @movies_bp.route('/movies', methods = ['POST'])
 def add_movie():
     data = request.json
-    new_movie = Movie(title = data['title'], year = data['year'])
+    new_movie = Movie(title = data['title'], year = data['year'],description= data['description'])
     db.session.add(new_movie)
     db.session.commit()
     return jsonify ({"message":"Movie Added", "movie": new_movie.to_dic()})
@@ -40,6 +40,7 @@ def update_movie(_id):
     data = request.json
     movie.title = data['title']
     movie.year = data['year']
+    movie.description = data['description']
     db.session.commit()
     return jsonify ({"message": "Movie Update Sucessful", "movie": movie.to_dic()})
 
