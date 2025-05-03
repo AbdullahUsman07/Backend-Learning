@@ -5,21 +5,26 @@ from . import db
 
 movies_bp = Blueprint('movies',__name__)
 
-def validate_movie_data(data):
+def validate_movie_data(data, partial = False):
     errors = {}
     
     title = data.get('title')
     year = data.get('year')
     description = data.get('description')
     
-    if not title or not title.strip():
-        errors['title'] = "Title is Required"
+    if not partial or 'title' in data:
+         if not title or not title.strip():
+             errors['title'] = "Title is Required"
+         elif len(title) <2:
+             errors['title'] = "Title must be atleast 2 character long"    
         
-    if not isinstance(year,int) or year < 1888 or year > 3100:
-        errors['year'] = 'Year is an integer must be between 1888 to 3100'
-    
-    if not description or not description.strip():
-        errors['desription'] = "description is required"  
+    if not partial or 'year' in data:   
+       if not isinstance(year,int) or year < 1888 or year > 3100:
+          errors['year'] = 'Year is an integer must be between 1888 to 3100'
+       
+    if not partial or 'description' in data:   
+       if not description or not description.strip():
+          errors['desription'] = "description is required"  
         
     if errors:
         return errors
@@ -79,6 +84,7 @@ def update_movie(_id):
     return jsonify ({"message": "Movie Update Sucessful", "movie": movie.to_dic()})
 
 
+
 @movies_bp.route('/movies/<int:_id>', methods = ['DELETE'])
 def delete_movie(_id):
     movie = Movie.query.get(_id)
@@ -88,3 +94,27 @@ def delete_movie(_id):
     db.session.commit()
     return jsonify({"message": "Movie deleted Successfully"})
 
+
+
+@movies_bp.route('/movies/<int:_id>', methods = ['PATCH'])
+def partial_update(_id):
+    movie = Movie.query.get(_id)
+    if not movie: 
+        return jsonify({"message": "Movie not Found"}),404
+    
+    data = request.json
+    errors = validate_movie_data(data, partial = True)
+    if errors:
+        return jsonify({"errors":errors}),400
+    
+    if 'title' in data:
+        movie.title = data['title']
+    
+    if 'year' in data:
+        movie.year =data['year']
+        
+    if 'description' in data:
+        movie.description = data['description']
+    
+    db.session.commit()
+    return jsonify({"message":"Movie Update Sucessful", "movie": movie.to_dic()}),200
