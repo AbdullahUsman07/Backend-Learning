@@ -5,6 +5,28 @@ from . import db
 
 movies_bp = Blueprint('movies',__name__)
 
+def validate_movie_data(data):
+    errors = {}
+    
+    title = data.get('title')
+    year = data.get('year')
+    description = data.get('description')
+    
+    if not title or not title.strip():
+        errors['title'] = "Title is Required"
+        
+    if not isinstance(year,int) or year < 1888 or year > 3100:
+        errors['year'] = 'Year is an integer must be between 1888 to 3100'
+    
+    if not description or not description.strip():
+        errors['desription'] = "description is required"  
+        
+    if errors:
+        return errors
+
+
+# routes
+
 @movies_bp.route('/')
 def home():
     return "Flask App with Blueprints Running"
@@ -12,7 +34,13 @@ def home():
 @movies_bp.route('/movies', methods = ['POST'])
 def add_movie():
     data = request.json
-    new_movie = Movie(title = data['title'], year = data['year'],description= data['description'])
+    errors = validate_movie_data(data)
+    
+    if errors:
+        return jsonify({"errors":errors}),400
+    
+      
+    new_movie = Movie(title= data['title'],year= data['year'],description = data['description'])
     db.session.add(new_movie)
     db.session.commit()
     return jsonify ({"message":"Movie Added", "movie": new_movie.to_dic()})
@@ -37,12 +65,19 @@ def update_movie(_id):
     movie = Movie.query.get(_id)
     if not movie:
         return jsonify ({"message":"No movie found"}),404
+    
     data = request.json
+    errors = validate_movie_data(data)
+    
+    if errors:
+        return jsonify({"errors":errors}),400
+    
     movie.title = data['title']
     movie.year = data['year']
     movie.description = data['description']
     db.session.commit()
     return jsonify ({"message": "Movie Update Sucessful", "movie": movie.to_dic()})
+
 
 @movies_bp.route('/movies/<int:_id>', methods = ['DELETE'])
 def delete_movie(_id):
