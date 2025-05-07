@@ -6,6 +6,12 @@ class User(db.Model):
     username = db.Column(db.String(120),unique= True, nullable = False,)
     password = db.Column(db.String(120), nullable = False)
     
+    
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        
+    
     def _repr_(self):
         return f'User {self.username}'
     
