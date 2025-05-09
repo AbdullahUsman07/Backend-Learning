@@ -10,7 +10,7 @@ with app.app_context():
     if not User.query.filter_by(username= "admin").first():
         admin_user = User(
             username="admin",
-            password= "adminNeitzche",
+            password= generate_password_hash("adminPassword123", method = 'pbkdf2:sha256'),
             role= "admin",
         )
         
