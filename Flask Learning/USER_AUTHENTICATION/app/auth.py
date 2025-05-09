@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from . import db
 from .models import User
+from .auth_helpers import admin_required
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -14,13 +15,17 @@ def register_user():
     if User.query.filter_by(username = data['username']).first():
         return jsonify ({"message": "Username Already Exist"}), 400
     
+    role = data.get('role','user')
+    if role != 'user':
+        return jsonify({"message": "Can't assign Admin roles"}),403
+    
     hashed_password = generate_password_hash(data['password'], method= 'pbkdf2:sha256')
-    new_user = User(username= data['username'], password = hashed_password)
+    new_user = User(username= data['username'], password = hashed_password, role= 'user')
     
     db.session.add(new_user)
     db.session.commit()
     
-    return jsonify ({"message":"User Added Successfully"})
+    return jsonify ({"message":"User Added Successfully"}),201
 
 
 @auth_bp.route('/login', methods = ['POST'])
@@ -44,3 +49,10 @@ def profile():
     current_user_identity = get_jwt_identity()
     user = User.query.get(current_user_identity)
     return jsonify (username = user.username),200
+
+
+@auth_bp.route('/admin-dashboard', methods = ['GET'])
+@jwt_required()
+@admin_required
+def admin_dashboard():
+    return jsonify({"message": "Welcome to the Admin Dashboard"}),200
