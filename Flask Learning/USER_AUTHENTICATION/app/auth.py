@@ -20,7 +20,7 @@ def register_user():
         return jsonify({"message": "Can't assign Admin roles"}),403
     
     hashed_password = generate_password_hash(data['password'], method= 'pbkdf2:sha256')
-    new_user = User(username= data['username'], password = hashed_password, role= 'user')
+    new_user = User(username= data['username'], password = hashed_password, role= 'user',age= data['age'])
     
     db.session.add(new_user)
     db.session.commit()
