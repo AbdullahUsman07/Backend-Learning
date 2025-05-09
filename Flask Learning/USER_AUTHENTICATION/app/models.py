@@ -8,7 +8,7 @@ class User(db.Model):
     role = db.Column(db.String(50), nullable= False, default= 'user')
     
     
-    def __init__(self, username, password, role):
+    def __init__(self, username, password, role='user'):
         self.username = username
         self.password = password
         self.role = role

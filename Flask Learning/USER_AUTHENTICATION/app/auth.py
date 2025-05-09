@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from . import db
 from .models import User
-from .auth_helpers import admin_required
+from .auth_helpers import role_required
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -53,6 +53,13 @@ def profile():
 
 @auth_bp.route('/admin-dashboard', methods = ['GET'])
 @jwt_required()
-@admin_required
+@role_required('admin')
 def admin_dashboard():
     return jsonify({"message": "Welcome to the Admin Dashboard"}),200
+
+
+@auth_bp.route('/user-dashboard', methods= ['GET'])
+@jwt_required()
+@role_required('user','admin')
+def user_dashboard():
+    return jsonify({"message":" Welcome to user dashboard"}),200
