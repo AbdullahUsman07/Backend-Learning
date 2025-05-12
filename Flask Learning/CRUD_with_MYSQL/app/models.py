@@ -6,15 +6,15 @@ class User:
     def get_all_users():
         curr = mysql.connection.cursor()
         curr.execute("Select * from Users")
-        users = curr.fetch_all()
+        users = curr.fetchall()
         curr.close()
         return users
     
     @staticmethod
-    def get_user(user_id):
+    def get_user_byID(user_id):
         curr = mysql.connection.cursor()
-        curr.execute("Select * from Users where id = %s",(user_id))
-        user = curr.fetch_all()
+        curr.execute("Select * from Users where id = %s",(user_id,))
+        user = curr.fetchall()
         curr.close()
         return user 
     
@@ -23,7 +23,7 @@ class User:
         curr = mysql.connection.cursor()
         
         try:
-            curr.execute("Insert into Users (name, email, phone) values (%s, %s, %s) ",(name, email, phone))
+            curr.execute("Insert into Users (Uname, email, phone) values (%s, %s, %s) ",(name, email, phone))
             mysql.connection.commit()
             userid = curr.lastrowid
             return userid
@@ -36,14 +36,14 @@ class User:
     @staticmethod
     def update_user(user_id, name, email, phone):
         curr = mysql.connection.cursor()
-        curr.execute("Update Users SET name = %s, email = %s, phone = %s where id = %s", (name, email, phone, user_id))
+        curr.execute("Update Users SET Uname = %s, email = %s, phone = %s where id = %s", (name, email, phone, user_id))
         mysql.connection.commit()
         curr.close()
         
     @staticmethod
     def delete_user(user_id):
-        curr = mysql.connection.cursor
-        curr.execute("Delete from Users where id = %s", (user_id))
+        curr = mysql.connection.cursor()
+        curr.execute("Delete from Users where id = %s", (user_id,))
         mysql.connection.commit()
         curr.close()
             
