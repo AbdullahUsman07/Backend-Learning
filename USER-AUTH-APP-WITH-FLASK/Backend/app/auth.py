@@ -24,12 +24,13 @@ def register_user():
         username = data['username'],
         password = hashed_password,
         age = data['age'],
-        role = 'user'
+        role = data['role']
     )
     db.session.add(new_user)
     db.session.commit()
     
-    return jsonify({"msg":"User registered successfully"}), 201
+    access_token = create_access_token(identity= str(new_user.id))
+    return jsonify({"msg":"User registered successfully","access_token":access_token}), 201
 
 
 @auth_bp.route('/login',methods = ['POST'])
@@ -49,7 +50,11 @@ def login_user():
 def get_profile():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
-    return jsonify(username=user.username),200
+    return jsonify({
+        "username": user.username,
+        "age": user.age,
+        "role": user.role
+        }),200
 
 @auth_bp.route('/admin-dashboard', methods= ['GET'])
 @jwt_required()
