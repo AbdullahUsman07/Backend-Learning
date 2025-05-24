@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/mainscreen.dart';
+import 'package:frontend/services/api_service.dart';
 import 'package:frontend/widgets/customButton.dart';
 import 'package:frontend/widgets/customTextFeild.dart';
 
@@ -42,9 +44,30 @@ class _LoginUserScreenState extends State<LoginUserScreen> {
               labelText: 'password',
               controller: passController,
               keyboardType: TextInputType.text,
+              isPassword: true,
             ),
             const SizedBox(height: 20),
-            CustomButton(onPressed: () {}, title: 'Login'),
+            CustomButton(onPressed: () async{
+              final result = await ApiService.login(
+                nameController.text,
+                passController.text,
+              );
+              if(!mounted) return;
+              if(result != null){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Login successful!')),
+                );
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainScreen(token: result['token'])),
+                  (route)=> false,
+                );
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Login failed. Please try again.')),
+                );
+              }
+            }, title: 'Login'),
           ],
         ),
       ),

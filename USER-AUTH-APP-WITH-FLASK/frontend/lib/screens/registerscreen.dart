@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/mainscreen.dart';
+import 'package:frontend/services/api_service.dart';
 import 'package:frontend/widgets/customButton.dart';
 import 'package:frontend/widgets/customTextFeild.dart';
 
@@ -47,6 +49,7 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
                 labelText: 'password',
                 controller: passController,
                 keyboardType: TextInputType.text,
+                isPassword: true,
               ),
               const SizedBox(height: 10),
               CustomTextField(
@@ -57,7 +60,26 @@ class _RegisterUserScreenState extends State<RegisterUserScreen> {
               const SizedBox(height: 10),
               CustomTextField(labelText: 'role', controller: roleController, keyboardType: TextInputType.text),
               const SizedBox(height: 20),
-              CustomButton(onPressed: () {}, title: 'Register'),
+              CustomButton(onPressed: () async{
+                final result = await ApiService.regsister(
+                  nameController.text,
+                  passController.text,
+                  int.parse(ageController.text),
+                  roleController.text,
+                );
+                if (!mounted) return;
+                if (result != null) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainScreen(token: result['token'])),
+                    (route)=>false,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Registration failed. Please try again.')),
+                  );
+                }
+              }, title: 'Register'),
             ],
           ),
         ),

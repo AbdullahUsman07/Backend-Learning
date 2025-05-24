@@ -6,19 +6,21 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.labelText,
     required this.controller,
-    required this.keyboardType
+    required this.keyboardType,
+    this.isPassword =false,
   });
 
   final String? labelText;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final bool? isPassword ;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      
+      obscureText: isPassword?? false,
       decoration: InputDecoration(
         labelText: labelText,
         filled: true,
