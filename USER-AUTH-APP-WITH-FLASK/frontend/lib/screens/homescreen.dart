@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/loginscreen.dart';
 import 'package:frontend/screens/registerscreen.dart';
@@ -10,30 +8,44 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  
-      appBar: AppBar(  
+    return Scaffold(
+      appBar: AppBar(
         title: const Text('Home Screen'),
-        centerTitle: true
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          child: Column(  
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
             children: [
-              CustomButton(title: 'Register', onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> RegisterUserScreen()));
-              },),
-              const SizedBox(height:10),
-              CustomButton(title: 'Login', onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginUserScreen(),));
-              },),
+              CustomButton(
+                title: 'Register',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegisterUserScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomButton(
+                title: 'Login',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginUserScreen()),
+                  );
+                },
+              ),
             ],
-          )
           ),
-      )
+        ),
+      ),
     );
   }
 }
-
